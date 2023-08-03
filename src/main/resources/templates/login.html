@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>后台登录</title>
+    <link th:href="@{/static/css/login.css}" type="text/css" rel="stylesheet">
+    <script type="text/javascript" th:src="@{/static/layui.js}"></script>
+</head>
+<body>
+<div id="wrapper" class="login-page">
+    <div id="login_form" class="form">
+        <form class="login-form layui-form" action="/login_check" method="POST">
+            <h2>管理登录</h2>
+            <input lay-verify="required" id="username" name="username" placeholder="用户名" type="text"/>
+            <input lay-verify="pass" id="password" name="password" placeholder="密码" type="password"/>
+            <button id="login" lay-submit lay-filter="lay-login-submit">登　录</button>
+            <p class="message">还没有账户? <a href="#">立刻创建</a></p>
+        </form>
+    </div>
+    <input type="hidden" id="tips" th:value="${tip}"/>
+</div>
+<script>
+    layui.use(['form', 'jquery'], function (Form, jQuery) {
+        // 表单验证
+        Form.verify({
+            pass: [/^[\S]{5,12}$/, '密码必须5到12位，且不能出现空格']
+        });
+        // 表单提交
+        Form.on('submit(lay-login-submit)', function (obj) {
+            console.log(obj)
+        });
+        // 错误提示窗
+        let errorMsg = jQuery("#tips").val();
+        if (errorMsg) {
+            layer.msg(errorMsg, {offset: '15px', icon: 3, time: 1000});
+        }
+    });
+</script>
+<!-- 底部结束 -->
+</body>
+</html>
