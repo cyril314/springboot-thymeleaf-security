@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:include="_include :: head('用户列表')"/>
+<body class="layui-anim layui-anim-up">
+<div class="x-nav">
+      <span class="layui-breadcrumb">
+        <a href="">首页</a>
+        <a href="">系统</a>
+        <a><cite>用户管理</cite></a>
+      </span>
+    <a class="layui-btn layui-btn-primary layui-btn-small" style="line-height:1.6em;margin-top:3px;float:right"
+       href="javascript:location.replace(location.href);" title="刷新">
+        <i class="layui-icon" style="line-height:38px">ဂ</i></a>
+</div>
+<div class="x-body">
+    <div class="layui-row">
+        <form class="layui-form layui-col-md12 x-so">
+            <input class="layui-input" placeholder="开始日" name="start" id="start">
+            <input class="layui-input" placeholder="截止日" name="end" id="end">
+            <input type="text" name="username" placeholder="请输入用户名" autocomplete="off" class="layui-input">
+            <button class="layui-btn" lay-submit="" lay-filter="sreach"><i class="layui-icon">&#xe615;</i></button>
+        </form>
+    </div>
+    <table id="user-table" class="layui-table" lay-filter="user-table"></table>
+</div>
+<script type="text/html" id="user-toolbar">
+    <button class="layui-btn layui-btn-sm layui-btn-danger layui-btn-radius" lay-event="batchRemove">
+        <i class="layui-icon layui-icon-delete">删除</i>
+    </button>
+    <button class="layui-btn layui-btn-sm layui-btn-radius" lay-event="add">
+        <i class="layui-icon layui-icon-edit">新增</i>
+    </button>
+</script>
+
+<script type="text/html" id="tableBar">
+    <button class="layui-btn layui-btn-xs layui-btn-primary" lay-event="edit"><i class="layui-icon">&#xe642;</i></button>
+    <button class="layui-btn layui-btn-xs layui-btn-danger" lay-event="remove"><i class="layui-icon layui-icon-delete"></i></button>
+</script>
+<script>
+    layui.use(['table', 'form', 'jquery'], function (table, form, jq) {
+        table.render({
+            method: 'post',
+            elem: '#user-table',
+            url: '/admin/user/page',
+            page: true,
+            limits: [10, 20, 50],
+            limit: 10,
+            cols: [
+                [
+                    {field: 'id', title: 'ID', width: 110, align: 'center'},
+                    {field: 'ctime', title: '创建时间', width: 170},
+                    {field: 'username', title: '用户名', minWidth: 120},
+                    {field: 'desc', title: '备注', minWidth: 150},
+                    {
+                        field: 'enabled', title: '状态', width: 60, templet: function (d) {
+                            return '<span>' + d.enabled ? "正常" : "禁用" + '</span>';
+                        }
+                    },
+                    {fixed: 'right', title:'操作', width: 120, toolbar: '#tableBar'}
+                ]
+            ],
+            toolbar: '#user-toolbar',
+            defaultToolbar: [{
+                title: '刷新',
+                layEvent: 'refresh',
+                icon: 'layui-icon-refresh',
+            }, 'filter', 'print', 'exports']
+        });
+
+        table.on('tool(user-table)', function (obj) {
+            if (obj.event === 'remove') {
+                window.batchRemove(obj);
+            } else if (obj.event === 'edit') {
+                window.edit(obj);
+            }
+        });
+
+        table.on('toolbar(user-table)', function (obj) {
+            if (obj.event === 'add') {
+                layer.open({
+                    type: 2,
+                    title: '新增',
+                    shade: 0.1,
+                    content: MODULE_PATH + 'add.html'
+                });
+            } else if (obj.event === 'refresh') {
+                table.reload('user-table');
+            } else if (obj.event === 'batchRemove') {
+                window.batchRemove(obj);
+            }
+        });
+
+        form.on('submit(user-query)', function (data) {
+            table.reload('user-table', {
+                where: data.field
+            })
+            return false;
+        });
+    })
+</script>
+</body>
+</html>

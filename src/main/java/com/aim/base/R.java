@@ -1,14 +1,14 @@
 package com.aim.base;
 
 import com.alibaba.fastjson.JSONObject;
-import lombok.Getter;
+import lombok.Data;
 
 /**
  * @Author AIM
  * @Des 返回信息对象
  * @DATE 2018/1/31
  */
-@Getter
+@Data
 public class R {
     /**
      * 返回信息
@@ -37,8 +37,14 @@ public class R {
         return new R(code, msg, data);
     }
 
+    public static R success(Object data, int count) {
+        R r = new R(0, null, data);
+        r.setCount(count);
+        return r;
+    }
+
     public static R success(String msg, Object data) {
-        return getInstance(200, msg, data);
+        return getInstance(0, msg, data);
     }
 
     public static R success(String msg) {
@@ -46,7 +52,7 @@ public class R {
     }
 
     public static R error(String msg) {
-        return getInstance(0, msg, null);
+        return getInstance(-1, msg, null);
     }
 
     public String toString() {
