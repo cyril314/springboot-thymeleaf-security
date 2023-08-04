@@ -1,4 +1,4 @@
-    package com.aim.util;
+package com.aim.util;
 
 import org.springframework.beans.BeansException;
 import org.springframework.beans.FatalBeanException;
@@ -8,6 +8,9 @@ import java.beans.PropertyDescriptor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @AUTO 自定义实体复制赋值工具类
@@ -118,5 +121,39 @@ public abstract class BeanUtils extends org.springframework.beans.BeanUtils {
         classArr[0] = "java.lang.String".getClass();
         Method method = bean.getClass().getMethod(methodName, classArr);
         method.invoke(bean, value);
+    }
+
+    /**
+     * 返回Bean对象数组
+     *
+     * @param resultSet
+     * @param clazz
+     * @param <T>
+     * @return 返回Bean对象数组
+     */
+    public static <T> List<T> ResultSetToBean(ResultSet resultSet, Class<T> clazz) throws Exception {
+        T instance = null;
+        // 获取Bean对象内的所有属性
+        List<T> beanList = new ArrayList<T>();
+        if (resultSet != null) {
+            while (resultSet.next()) {
+                instance = getBean(resultSet, clazz);
+                beanList.add(instance);
+            }
+        }
+        return beanList;
+    }
+
+    public static <T> T getBean(ResultSet resultSet, Class<T> clazz) throws Exception {
+        T instance = clazz.newInstance();
+        Field fields[] = clazz.getDeclaredFields();
+        for (Field field : fields) {
+            Object result = resultSet.getObject(field.getName());
+            boolean flag = field.isAccessible();
+            field.setAccessible(true);
+            field.set(instance, result);
+            field.setAccessible(flag);
+        }
+        return instance;
     }
 }

@@ -3,6 +3,7 @@ package com.aim.config.security.utils;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
@@ -25,6 +26,14 @@ public class SecurityHelper {
     }
 
     /**
+     * 获取用户信息
+     */
+    public static User getUser() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        return (User) auth.getPrincipal();
+    }
+
+    /**
      * 是否已经登陆
      */
     public static boolean isAuthenticated() {
@@ -38,24 +47,20 @@ public class SecurityHelper {
      * @desc springMVC中，为了方便随时获取当前的request对象
      */
     public static HttpServletRequest getRequest() {
-        HttpServletRequest request = null;
         if (RequestContextHolder.getRequestAttributes() != null) {
-            request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+            return ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
         }
-
-        return request;
+        return null;
     }
 
     /**
      * 请求对象获取session
      */
     public static HttpSession getSession() {
-        HttpSession session = null;
         HttpServletRequest request = getRequest();
         if (request != null) {
-            session = request.getSession(true);
+            return request.getSession(true);
         }
-
-        return session;
+        return null;
     }
 }

@@ -46,6 +46,31 @@
                     <li><a _href="/html/welcome.html"><i class="iconfont">&#xe6a7;</i><cite>控制台</cite></a></li>
                 </ul>
             </li>
+            <li th:each="menu : ${menus}">
+                <a th:_href="${menu.url}" th:lay-id="${menu.id}">
+                    <i th:classappend="${menu.icon}?:'iconfont ri-menu-add-line'"></i>
+                    <cite th:text="${menu.name}">${menu.name}</cite>
+                    <i th:if="${not #lists.isEmpty(menu.children)}" class="iconfont nav_right">&#xe6a7;</i>
+                </a>
+                <ul class="sub-menu" th:if="${not #lists.isEmpty(menu.children)}">
+                    <li th:each="cmenu : ${menu.children}">
+                        <a th:_href="${cmenu.url}" th:lay-id="${cmenu.id}">
+                            <i th:classappend="${cmenu.icon}?:'iconfont ri-menu-add-line'"></i>
+                            <cite th:text="${cmenu.name}">二级菜单</cite>
+                            <i th:if="${not #lists.isEmpty(cmenu.children)}" class="iconfont nav_right">&#xe6a7;</i>
+                        </a>
+                        <ul class="sub-menu" th:if="${not #lists.isEmpty(cmenu.children)}">
+                            <li th:each="emenu : ${cmenu.children}">
+                                <a th:_href="${emenu.url}" th:lay-id="${emenu.id}">
+                                    <i th:classappend="${emenu.icon}?:'iconfont ri-menu-add-line'"></i>
+                                    <cite th:text="${emenu.name}">三级菜单</cite>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </li>
+
             <li>
                 <a href="javascript:;">
                     <i class="iconfont">&#xe6e4;</i>
@@ -176,7 +201,6 @@
                                     <cite>会员删除</cite>
                                 </a>
                             </li>
-
                         </ul>
                     </li>
                 </ul>

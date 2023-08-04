@@ -3,7 +3,9 @@ package com.aim.entity;
 import lombok.Data;
 
 import java.io.Serializable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * @AUTO 菜单节点
@@ -11,7 +13,9 @@ import java.util.*;
  * @DATE 2019/4/25
  */
 @Data
-public class MenuNode implements Comparable, Serializable {
+public class MenuNode implements Comparable<Object>, Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     /**
      * 节点id
@@ -114,49 +118,32 @@ public class MenuNode implements Comparable, Serializable {
     /**
      * 构建页面菜单列表
      */
-    public static List<MenuNode> buildTitle(List<MenuNode> nodes) {
+    public static List<MenuNode> buildTitle(List<MenuNode> nodes, long pid) {
         if (nodes.size() <= 0) {
             return nodes;
         }
         //对菜单排序，返回列表按菜单等级，序号的排序方式排列
         Collections.sort(nodes);
-        return mergeList(nodes, nodes.get(nodes.size() - 1).getLevel(), null);
+        return buildTree(nodes, pid);
     }
 
     /**
-     * 递归合并数组为子数组，最后返回第一层
+     * 收集传递的集合中父id相同的TreeNode
      *
-     * @param menuList
-     * @param rank 等级
-     * @param listMap
-     * @return
+     * @param menus 集合列表
+     * @param id    父ID
      */
-    private static List<MenuNode> mergeList(List<MenuNode> menuList, int rank, Map<Long, List<MenuNode>> listMap) {
-        //保存当次调用总共合并了多少元素
-        int n;
-        //保存当次调用总共合并出来的list
-        Map<Long, List<MenuNode>> currentMap = new HashMap<>();
-        //由于按等级从小到大排序，需要从后往前排序
-        //判断该节点是否属于当前循环的等级,不等于则跳出循环
-        for (n = menuList.size() - 1; n >= 0 && menuList.get(n).getLevel() == rank; n--) {
-            //判断之前的调用是否有返回以该节点的id为key的map，有则设置为children列表。
-            if (listMap != null && listMap.get(menuList.get(n).getId()) != null) {
-                menuList.get(n).setChildren(listMap.get(menuList.get(n).getId()));
-            }
-            if (menuList.get(n).getParentId() != null && menuList.get(n).getParentId() != 0) {
-                //判断当前节点所属的pid是否已经创建了以该pid为key的键值对，没有则创建新的链表
-                currentMap.computeIfAbsent(menuList.get(n).getParentId(), k -> new LinkedList<>());
-//                if (!(currentMap.containsKey(menuList.get(n).getParentId()))) {
-//                    currentMap.put(menuList.get(n).getParentId(), new LinkedList<MenuNode>());
-//                }
-                //将该节点插入到对应的list的头部
-                currentMap.get(menuList.get(n).getParentId()).add(0, menuList.get(n));
+    public static List<MenuNode> buildTree(List<MenuNode> menus, long id) {
+        List<MenuNode> children = new ArrayList<MenuNode>();
+        for (MenuNode treeNode : menus) {
+            //判断该节点的父id，是否与传入的父id相同，相同则递归设置其孩子节点，并将该节点放入children集合中
+            if (treeNode.getParentId() == id) {
+                //递归设置其孩子节点
+                treeNode.setChildren(buildTree(menus, treeNode.getId()));
+                //放入children集合
+                children.add(treeNode);
             }
         }
-        if (n < 0) {
-            return menuList;
-        } else {
-            return mergeList(new ArrayList<>(menuList.subList(0, n + 1)), menuList.get(n).getLevel(), currentMap);
-        }
+        return children;
     }
 }

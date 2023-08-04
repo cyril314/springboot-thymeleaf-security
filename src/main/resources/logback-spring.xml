@@ -10,7 +10,7 @@
         <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
             <encoder>
                 <pattern>${CONSOLE_LOG_PATTERN}</pattern>
-                <charset>GBK</charset>
+                <charset>utf-8</charset>
             </encoder>
         </appender>
         <!--默认所有的包以info-->
@@ -18,7 +18,7 @@
             <appender-ref ref="STDOUT"/>
         </root>
         <!--各个服务的包在本地执行的时候，打开debug模式-->
-        <logger name="com.aim" level="debug" additivity="false">
+        <logger name="com.aim" level="info" additivity="false">
             <appender-ref ref="STDOUT"/>
         </logger>
         <logger name="org.springframework.jdbc.core" additivity="false" level="DEBUG">
