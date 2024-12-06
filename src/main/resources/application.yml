@@ -42,22 +42,22 @@ spring:
     view:
       prefix: classpath:/jsp/
       suffix: .jsp
-    resources:
-      static-locations: [ classpath:/static/ ]
     pathmatch:
       matching-strategy: ant_path_matcher
-      format:
-        date: yyyy-MM-dd
-        time: HH:mm:ss
-        date-time: yyyy-MM-dd HH:mm:ss
-      http:
-        converters:
-          preferred-json-mapper: fastjson
-    # 文件上传
-    servlet:
-      multipart:
-        max-file-size: 500MB
-        max-request-size: 500MB
+    format:
+      date: yyyy-MM-dd
+      time: HH:mm:ss
+      date-time: yyyy-MM-dd HH:mm:ss
+    converters:
+      preferred-json-mapper: fastjson
+  web:
+    resources:
+      static-locations: [ classpath:/static/ ]
+  # 文件上传
+  servlet:
+    multipart:
+      max-file-size: 500MB
+      max-request-size: 500MB
 
 # mybatis配置
 mybatis:
