@@ -29,14 +29,6 @@ spring:
       test-on-borrow: false
       #如果为true（默认false），当应用使用完连接，连接池回收连接时会判断该连接是否还可用
       test-on-return: false
-  #thymeleaf模板配置项
-  thymeleaf:
-    enabled: true
-    cache: false
-    encoding: UTF-8
-    mode: HTML
-    servlet:
-      content-type: text/html
   mvc:
     #jsp模板配置
     view:
@@ -53,6 +45,16 @@ spring:
   web:
     resources:
       static-locations: [ classpath:/static/ ]
+  #thymeleaf模板配置项
+  thymeleaf:
+    enabled: true
+    servlet:
+      content-type: text/html
+    cache: false
+    prefix: classpath:/templates/
+    suffix: .html
+    encoding: UTF-8
+    mode: HTML
   # 文件上传
   servlet:
     multipart:
@@ -65,5 +67,5 @@ mybatis:
     cache-enabled: true
     use-generated-keys: true
     default-executor-type: REUSE
-  type-aliases-package: com.aim.entity
+  type-aliases-package: com.fit.entity
   mapper-locations: classpath:**/mapper/*.xml
